@@ -67,6 +67,39 @@ iris_with_missing = iris %>%
 
 ```
 
+## problem 2 
+```{r}
+## dataframe of all the datasets
+total_dataset = list.files(path = "./data/", full.names = TRUE) %>% 
+  as.data.frame() %>% 
+  rename("file_id" = ".") %>% 
+  mutate(file_id = as.character(file_id))
+
+##Create a tidy dataframe containing data from all participants, including the subject ID, arm, and observations over time  
+ tidy_data =  
+ total_dataset %>% 
+  mutate("data" = purrr::map(.x = pull(., file_id), read_csv),
+         file_id = str_extract(file_id, "[conexp]{3}_[0-9]{2}")) %>%
+  unnest() %>% 
+    pivot_longer(
+    names_prefix = "week_",
+    cols = week_1:week_8,
+    names_to = "week",
+    values_to = "observations"
+  ) %>%   
+  separate(file_id, into = c("arm", "subject_id"), sep = "_") %>% 
+  mutate(subject_id = as.factor(subject_id),
+         arm = as.factor(arm)) %>% 
+  select(subject_id, arm, everything())
+
+## Make a spaghetti plot showing observations on each subject over time, and comment on differences between groups.
+
+
+
+
+
+```
+
 
 
 
