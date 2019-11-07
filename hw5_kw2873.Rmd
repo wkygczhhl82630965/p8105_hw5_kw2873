@@ -68,7 +68,7 @@ iris_with_missing = iris %>%
 ```
 
 ## problem 2 
-```{r}
+```{r message = FALSE}
 ## dataframe of all the datasets
 total_dataset = list.files(path = "./data/", full.names = TRUE) %>% 
   as.data.frame() %>% 
@@ -88,7 +88,8 @@ total_dataset = list.files(path = "./data/", full.names = TRUE) %>%
     values_to = "observations"
   ) %>%   
   separate(file_id, into = c("arm", "subject_id"), sep = "_") %>% 
-  mutate(subject_id = as.factor(subject_id),
+  mutate(arm = recode(arm , "con" = "control", "exp" = "experimental"),
+         subject_id = as.factor(subject_id),
          arm = as.factor(arm)) %>% 
   select(subject_id, arm, everything())
 
@@ -97,8 +98,7 @@ total_dataset = list.files(path = "./data/", full.names = TRUE) %>%
 tidy_data %>% 
   ggplot(aes(x = week, y = observations, group = subject_id)) +
   geom_line(aes(color = subject_id)) +
-  facet_grid( . ~ arm, 
-      labeller = labeller(arm = c('con' = "Control Group", 'exp' = "Experimental Group"))) +
+  facet_grid( . ~ arm) +
   labs(
     title = " Spaghetti Plot showing Observations on Each Subject Over Time,  ",
     x = "Week",
@@ -106,6 +106,6 @@ tidy_data %>%
   )
 
 ```
-comment: 
-
+Interpretation: 
+Based on the plot above, we can see that on average that as time went by, the weekly observation is relative stable in control group. On the contrary, there was a increasing trend in weekly observation in experimental group. Overall, experimental group showed larger observation than control group.
 
