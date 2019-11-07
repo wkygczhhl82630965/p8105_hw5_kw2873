@@ -111,7 +111,7 @@ Based on the plot above, we can see that on average that as time went by, the we
 
 
 ## problem 3 
-```{r}
+```{r message=FALSE}
 # function for doing regression simulation and set parameters mentioned
 sim_regression = function(n = 30, beta0 = 2, beta1 = 0) {
     sim_data = tibble(
@@ -123,12 +123,18 @@ sim_regression = function(n = 30, beta0 = 2, beta1 = 0) {
   
   ls_with_pvalue = broom::tidy(ls_fit)
   
-  # create a dataframe with two variables: beta1_hat and its p-values
-  tibble(
+    tibble(
     beta1_hat = ls_with_pvalue[[2, "estimate"]],
     p_value = ls_with_pvalue[[2, "p.value"]]
   )
 }
+
+## 10000 runs of dataset
+  simulation = 
+  tibble(beta1 = 0:6) %>% 
+  mutate(beta1_hat = map(.x = beta1, ~rerun(10000, sim_regression(beta1 = .x)))) %>% 
+  unnest()  %>%
+  unnest
 
 
 
