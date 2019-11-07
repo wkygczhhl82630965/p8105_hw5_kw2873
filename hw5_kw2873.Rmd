@@ -111,6 +111,8 @@ Based on the plot above, we can see that on average that as time went by, the we
 
 
 ## problem 3 
+
+Generate 10000 datasets from the model
 ```{r message=FALSE}
 # function for doing regression simulation and set parameters mentioned
 sim_regression = function(n = 30, beta0 = 2, beta1 = 0) {
@@ -132,12 +134,35 @@ sim_regression = function(n = 30, beta0 = 2, beta1 = 0) {
 ## 10000 runs of dataset
   simulation = 
   tibble(beta1 = 0:6) %>% 
-  mutate(beta1_hat = map(.x = beta1, ~rerun(10000, sim_regression(beta1 = .x)))) %>% 
+  mutate(beta1_hat = map(.x = beta1, ~rerun(100, sim_regression(beta1 = .x)))) %>% 
   unnest()  %>%
   unnest
 
+```
 
+plot showing the proportion of times the null was rejected (the power of the test) on the y axis and the true value of β2 on the x axis.
+```{r}
+simulation_plot = 
+  simulation %>% 
+  mutate(decision = case_when(
+    p_value <= 0.05 ~ "reject",
+    p_value > 0.05 ~ "failed to reject",
+    TRUE ~ ""
+  )) %>% 
+  group_by(beta1, decision) %>% 
+  summarize(reject_proportion = n()/10000) %>% 
+  filter(decision == "reject")
 
+simulation_plot %>% 
+  ggplot(aes(x = beta1, y = reject_proportion)) +
+  geom_point() + geom_line() +
+  scale_x_continuous(breaks = c(0, 1, 2, 3, 4, 5, 6)) +
+  labs(
+    title = "Line Plot Showing the Proportion of Times the Null being Rejected",
+    x = "Beta 1",
+    y = "Proportion of Times the Null being Rejected"
+  )
+  
 ```
 
 
