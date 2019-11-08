@@ -161,7 +161,7 @@ plot showing the proportion of times the null was rejected (the power of the tes
   )
   
 ```
-interpretation: As we can see that the line indicates a positive correlation, we can see that the larger of effect size, the power increases along.
+interpretation: Based on the plot, we can see that there is a positive correlation between power and beta1. As the effect size increases, power also increases
 
 ```{r}
 simulation %>%  
